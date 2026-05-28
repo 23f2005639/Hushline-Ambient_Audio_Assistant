@@ -1,0 +1,25 @@
+# Ignore Python bytecode caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Local Python virtual environment
+.venv/
+venv/
+env/
+
+# Distribution / packaging
+*.egg-info/
+build/
+dist/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE / editor files
+.vscode/
+.idea/
+
+# Archive or generated artifacts
+ambient_project.zip

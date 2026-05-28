@@ -56,6 +56,7 @@ class QtOverlayRuntime:
         on_preview_settings: Callable[[dict[str, Any]], None] | None = None,
     ):
         self.app = QApplication.instance() or QApplication([])
+        self.app.setQuitOnLastWindowClosed(False)
         self.media_controller = media_controller
         self.settings = settings
         self.settings_window = None
