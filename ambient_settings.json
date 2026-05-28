@@ -1,0 +1,32 @@
+{
+  "auto_collapse": true,
+  "click_to_open_controller": true,
+  "collapse_ms": 4000,
+  "controller_theme": {
+    "accent": "#66E2FF",
+    "background": "#161A25",
+    "muted": "#A7B1C3",
+    "surface": "#1D2332",
+    "text": "#F4F5FF"
+  },
+  "island_position": "top-center",
+  "notification_style": "tiny_chip",
+  "notify_collapse_ms": 2800,
+  "notify_when_circle_off": true,
+  "notify_when_island_hidden": true,
+  "notify_when_island_visible": true,
+  "resume_delay": 5.4,
+  "show_island": true,
+  "silence_trigger": 26,
+  "speech_trigger": 4,
+  "state_colors": {
+    "calibrating": "#FFD166",
+    "error": "#FF5C7A",
+    "idle": "#95A5A6",
+    "listening": "#66E2FF",
+    "paused": "#FF8D7D",
+    "speaking": "#FF8D7D"
+  },
+  "state_notifications_enabled": true,
+  "vad_aggressiveness": 1
+}
