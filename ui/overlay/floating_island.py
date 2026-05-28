@@ -121,6 +121,7 @@ class FloatingIsland(QWidget):
         del event
         was_dragging = self.dragging
         self.dragging = False
+        self.user_interacting = False
         if not was_dragging:
             self._handle_click_action()
         else:
