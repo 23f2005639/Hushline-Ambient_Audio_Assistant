@@ -10,8 +10,16 @@ class StateMachine:
         self.resume_delay     = 0.5
         self.pending_resume_time = None
         self.state            = "idle"
+        self.paused = False
+
+    def set_paused(self, paused: bool):
+        self.paused = paused
+        if paused:
+            self.pending_resume_time = None
 
     def process_event(self, event):
+        if self.paused:
+            return
         current_time = time.time()
 
         if event == "user_speaking":
@@ -50,6 +58,8 @@ class StateMachine:
             )
 
     def tick(self, current_time: float | None = None):
+        if self.paused:
+            return
         if current_time is None:
             current_time = time.time()
         if self.state != "silent" or self.pending_resume_time is None:

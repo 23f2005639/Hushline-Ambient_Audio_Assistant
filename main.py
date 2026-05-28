@@ -28,6 +28,7 @@ class AmbientApp:
         self.media_controller = MediaController()
         self.state_machine = StateMachine(self.media_controller)
         self.noise_tracker = NoiseTracker()
+        self.paused = False
         self.vad_engine = VADEngine(
             aggressiveness=int(self.settings["vad_aggressiveness"])
         )
@@ -50,6 +51,7 @@ class AmbientApp:
         self.tray = TrayApp(
             on_open_settings=self.open_settings,
             on_toggle_island=self.toggle_island,
+            on_toggle_pause=self.toggle_paused,
             on_recalibrate=self.run_calibration_async,
             on_quit=self.stop,
             get_color=self.get_state_color,
@@ -134,6 +136,8 @@ class AmbientApp:
 
         self.overlay.apply_settings(settings)
         self.tray.set_state(self.overlay.overlay.state)
+        if self.paused:
+            self.tray.set_paused(True)
         print("  SETTINGS -> applied")
 
     def start_background_runtime(self):
@@ -156,6 +160,9 @@ class AmbientApp:
             with stream:
                 while self.running:
                     event = self.event_queue.pop()
+                    if self.paused:
+                        time.sleep(0.01)
+                        continue
                     if event:
                         self.state_machine.process_event(event)
                         self._handle_event_state(event)
@@ -204,6 +211,24 @@ class AmbientApp:
         self.overlay.set_state(state, payload)
         self.tray.set_state(state)
         self.push_media_info()
+
+    def toggle_paused(self):
+        self.set_paused(not self.paused)
+
+    def set_paused(self, paused: bool):
+        self.paused = paused
+        self.state_machine.set_paused(paused)
+        if paused:
+            self.overlay.set_state(
+                "paused",
+                {"notification": {"title": "Paused", "body": "Tray pause mode"}},
+            )
+            self.tray.set_paused(True)
+        else:
+            restored_state = self.state_machine.state or "idle"
+            self.overlay.set_state(restored_state)
+            self.tray.set_paused(False)
+            self.tray.set_state(restored_state)
 
     def stop(self):
         if self._stopping:
