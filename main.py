@@ -1,3 +1,39 @@
+import sys
+import os
+import tempfile
+
+def ensure_single_instance():
+    """
+    Prevents multiple instances of HushLine running simultaneously.
+    Uses a lock file in the temp directory.
+    If another instance is already running, exit immediately.
+    """
+    lock_file = os.path.join(tempfile.gettempdir(), "hushline.lock")
+
+    try:
+        # try to create the lock file exclusively
+        # if it already exists and is locked, another instance is running
+        import msvcrt
+
+        lock = open(lock_file, 'w')
+        msvcrt.locking(lock.fileno(), msvcrt.LK_NBLCK, 1)
+
+        # write our PID so we can identify the process
+        lock.write(str(os.getpid()))
+        lock.flush()
+
+        # keep the lock file handle open for the lifetime of the process
+        # storing it prevents garbage collection from closing it
+        sys._hushline_lock = lock
+
+    except (IOError, OSError):
+        # lock already held — another instance is running
+        print("HushLine is already running.")
+        sys.exit(0)
+
+ensure_single_instance()
+
+
 import asyncio
 import os
 import threading

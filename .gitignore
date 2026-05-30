@@ -12,6 +12,7 @@ env/
 *.egg-info/
 build/
 dist/
+output/
 
 # OS files
 .DS_Store
