@@ -84,8 +84,14 @@ class AmbientApp:
     def run_calibration(self):
         self.overlay.set_state(
             "calibrating",
-            {"notification": {"title": "Calibrating", "body": "Stay quiet for a moment"}},
+            {
+                "notification": {
+                    "title": "Calibrating",
+                    "body": "Stay quiet for a moment",
+                }
+            },
         )
+
         def on_phase(phase, remaining):
             if phase == "silence":
                 title = "Calibration: stay silent"
@@ -99,7 +105,9 @@ class AmbientApp:
             )
 
         calibrator = Calibrator()
-        while self.running and not calibrator.run(self.noise_tracker, on_phase=on_phase):
+        while self.running and not calibrator.run(
+            self.noise_tracker, on_phase=on_phase
+        ):
             time.sleep(1)
         if self.running:
             self.overlay.set_state("listening")
@@ -195,10 +203,14 @@ class AmbientApp:
     def _handle_event_state(self, event: str):
         if event == "user_speaking":
             state = "speaking"
-            payload = {"notification": {"title": "Music paused", "body": "Speech detected"}}
+            payload = {
+                "notification": {"title": "Music paused", "body": "Speech detected"}
+            }
         elif event == "user_silent":
             state = "listening"
-            payload = {"notification": {"title": "Listening", "body": "Silence detected"}}
+            payload = {
+                "notification": {"title": "Listening", "body": "Silence detected"}
+            }
         elif event == "user_present":
             state = "listening"
             payload = {}
@@ -251,6 +263,17 @@ class AmbientApp:
         threading.Thread(target=force_exit, daemon=True).start()
 
     def run(self):
+        import signal
+        from PySide6.QtCore import QTimer
+
+        # handle KeyboardInterrupt, yes make ctrl+c work
+        signal.signal(signal.SIGINT, lambda sig, frame: self.stop())
+
+        # force qt event to refresh every 200ms.
+        self.sigint_timer = QTimer()
+        self.sigint_timer.start(200)
+        self.sigint_timer.timeout.connect(lambda: None)  # dummy target
+
         self.start_background_runtime()
         self.overlay.run()
 
