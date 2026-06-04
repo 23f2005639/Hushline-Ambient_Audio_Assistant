@@ -55,8 +55,12 @@ class QtOverlayRuntime:
         on_reset_appearance: Callable[[], dict[str, Any]],
         on_preview_settings: Callable[[dict[str, Any]], None] | None = None,
     ):
+        # init qt and add identities for wayland
         self.app = QApplication.instance() or QApplication([])
+        self.app.setApplicationName("ambient")
+        self.app.setDesktopFileName("ambient")
         self.app.setQuitOnLastWindowClosed(False)
+
         self.media_controller = media_controller
         self.settings = settings
         self.settings_window = None
@@ -86,6 +90,8 @@ class QtOverlayRuntime:
 
     def _stop_on_qt_thread(self):
         self.overlay.close()
+        if self.settings_window:
+            self.settings_window.close()
         self.app.quit()
 
     def apply_settings(self, settings: dict[str, Any]):

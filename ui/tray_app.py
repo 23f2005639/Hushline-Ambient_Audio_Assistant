@@ -1,8 +1,11 @@
 import threading
+import logging
 from typing import Callable
 
 import pystray
 from PIL import Image, ImageDraw
+
+logging.getLogger("pystray").setLevel(logging.CRITICAL)
 
 
 class TrayApp:
@@ -45,16 +48,35 @@ class TrayApp:
         draw.ellipse([18, 18, 46, 46], fill=(0, 0, 0, 0))
         return img
 
+    def _is_docked(self) -> bool:
+        """Checks if the system tray backend is actively docked.
+
+        Safely falls back if running in a headless or tray-less Linux session.
+        """
+        if not self.icon:
+            return False
+        # Xorg fallback engine specific check
+        if hasattr(self.icon, "_systray_manager") and not self.icon._systray_manager:
+            return False
+        return True
+
     def set_state(self, state: str) -> None:
         with self._lock:
             self.current_state = state
-            if not self.icon:
+            if not self._is_docked():
                 return
+
             display_state = "paused" if self.paused else state
             color = self.get_color(display_state)
             self.icon.icon = self._make_icon_image(color)
             self.icon.title = f"Hushline - {display_state.capitalize()}"
             self.icon.menu = self._make_menu()
+            try:
+                self.icon.icon = self._make_icon_image(color)
+                self.icon.title = f"Ambient - {display_state.capitalize()}"
+                self.icon.menu = self._make_menu()
+            except Exception:
+                pass
 
     def _make_menu(self) -> pystray.Menu:
         state = "paused" if self.paused else self.current_state
@@ -91,14 +113,20 @@ class TrayApp:
     def set_paused(self, paused: bool) -> None:
         with self._lock:
             self.paused = paused
-            if not self.icon:
+            if not self._is_docked():
                 return
-            self.icon.menu = self._make_menu()
-            self.set_state(self.current_state)
+            try:
+                self.icon.menu = self._make_menu()
+                self.set_state(self.current_state)
+            except Exception:
+                pass
 
     def stop(self) -> None:
         if self.icon:
-            self.icon.stop()
+            try:
+                self.icon.stop()
+            except Exception:
+                pass
 
     def run(self) -> None:
         self.icon = pystray.Icon(
@@ -107,4 +135,20 @@ class TrayApp:
             title="Hushline - Idle",
             menu=self._make_menu(),
         )
-        self.icon.run()
+
+        # Async status check to cleanly alert the user on startup if a tray bar is missing
+        def _check_dock_status():
+            import time
+
+            time.sleep(1.0)
+            if not self._is_docked():
+                print(
+                    "  TRAY -> No system tray manager found. Running cleanly in overlay-only mode."
+                )
+
+        threading.Thread(target=_check_dock_status, daemon=True).start()
+
+        try:
+            self.icon.run()
+        except Exception:
+            pass
