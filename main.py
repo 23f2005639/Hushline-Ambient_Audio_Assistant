@@ -278,5 +278,9 @@ class AmbientApp:
         self.overlay.run()
 
 
-if __name__ == "__main__":
+def main():
     AmbientApp().run()
+
+
+if __name__ == "__main__":
+    main()
