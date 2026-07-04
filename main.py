@@ -1,5 +1,11 @@
-import asyncio
+import sys
 import os
+
+# Add _MEIPASS directory to PATH on Windows so ctypes can locate PortAudio DLL (for sounddevice/PyInstaller)
+if getattr(sys, 'frozen', False) and sys.platform == 'win32':
+    os.environ['PATH'] = sys._MEIPASS + os.pathsep + os.environ.get('PATH', '')
+
+import asyncio
 import threading
 import time
 
