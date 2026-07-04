@@ -14,12 +14,14 @@ dependencies = [
     "PySide6_Addons>=6.11.1",
     "PySide6_Essentials>=6.11.1",
     "pystray>=0.19.5",
-    "python-xlib>=0.33",
+    "python-xlib>=0.33; sys_platform == 'linux'",
     "setuptools<70",
     "shiboken6>=6.11.1",
     "six>=1.17.0",
     "sounddevice>=0.5.5",
     "onnxruntime>=1.18.0",
+    "winrt-Windows.Media.Control>=1.0.0; sys_platform == 'win32'",
+    "winrt-Windows.Foundation>=1.0.0; sys_platform == 'win32'",
 ]
 
 [project.scripts]
