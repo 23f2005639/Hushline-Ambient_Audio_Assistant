@@ -1,26 +1,32 @@
 # Hushline Ambient Audio Assistant
 
-Automatically pauses active system media when speech is detected and resumes playback after silence.
+Automatically pauses active system media when speech is detected and resumes playback after silence using a neural Voice Activity Detector (VAD).
 
-## 🚀 Getting Started
+## Installation
 
-This project is managed with [uv](https://github.com/astral-sh/uv).
+Ensure you have system dependencies installed:
+* Linux: `sudo apt-get install -y libportaudio2 playerctl`
+* Windows: None (uses built-in APIs)
 
-### Installation
+Install dependencies using uv:
+```bash
+uv pip install -e .
+```
 
-1. Install `uv` if not already installed.
-2. Install system dependencies:
-   ```bash
-   sudo apt-get install -y libportaudio2 playerctl
-   ```
-3. Sync environment and install package dependencies:
-   ```bash
-   uv pip install -e .
-   ```
+## Running
 
-### Running
-
-To start the assistant:
+Start the assistant:
 ```bash
 uv run hushline
 ```
+
+The application automatically downloads and caches the 1.8MB neural VAD model on its first run.
+
+## Packaging for Windows
+
+To build a standalone Windows executable:
+```bash
+uv pip install pyinstaller
+pyinstaller hushline.spec
+```
+The packaged file will be generated in `dist/Hushline.exe`.
