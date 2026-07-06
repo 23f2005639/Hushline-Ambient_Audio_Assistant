@@ -9,14 +9,14 @@ logging.getLogger("pystray").setLevel(logging.CRITICAL)
 
 
 class TrayApp:
-    """Native system tray host for Ambient."""
+    """Native system tray host for Hushline."""
 
     STATE_SUBTITLE = {
         "idle": "Idle",
         "listening": "Listening - will pause on speech",
         "speaking": "Speech detected - pausing music",
         "paused": "Music paused - waiting for silence",
-        "calibrating": "Calibrating ambient noise",
+        "calibrating": "Calibrating background noise",
         "error": "Needs attention",
     }
 
@@ -68,6 +68,9 @@ class TrayApp:
 
             display_state = "paused" if self.paused else state
             color = self.get_color(display_state)
+            self.icon.icon = self._make_icon_image(color)
+            self.icon.title = f"Hushline - {display_state.capitalize()}"
+            self.icon.menu = self._make_menu()
             try:
                 self.icon.icon = self._make_icon_image(color)
                 self.icon.title = f"Ambient - {display_state.capitalize()}"
@@ -127,9 +130,9 @@ class TrayApp:
 
     def run(self) -> None:
         self.icon = pystray.Icon(
-            name="ambient",
+            name="hushline",
             icon=self._make_icon_image(self.get_color("idle")),
-            title="Ambient - Idle",
+            title="Hushline - Idle",
             menu=self._make_menu(),
         )
 

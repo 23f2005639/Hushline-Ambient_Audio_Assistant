@@ -7,10 +7,10 @@ class ConfidenceEngine:
     not repeatedly while the state stays the same.
     """
 
-    def __init__(self, speech_trigger=5, silence_trigger=40):
+    def __init__(self, speech_trigger=7, silence_trigger=40):
 
         # how many consecutive speech frames before confirming speech
-        # 5 frames × 30ms = 150ms
+        # 7 frames × 30ms = 210ms
         self.speech_trigger  = speech_trigger
 
         # how many consecutive silent frames before confirming silence

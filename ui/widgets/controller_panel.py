@@ -48,7 +48,7 @@ class ControllerPanel(QFrame):
         self.title.setObjectName("title")
         self.title.setWordWrap(False)
         self.title.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        self.subtitle = QLabel("Ambient controller ready")
+        self.subtitle = QLabel("Hushline controller ready")
         self.subtitle.setObjectName("subtitle")
         self.subtitle.setWordWrap(False)
         self.subtitle.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
@@ -120,7 +120,7 @@ class ControllerPanel(QFrame):
         self.progress_anim.setDuration(450)
         self.progress_anim.setEasingCurve(QEasingCurve.Type.InOutCubic)
         self._raw_title = "Nothing playing"
-        self._raw_subtitle = "Ambient controller ready"
+        self._raw_subtitle = "Hushline controller ready"
         self._raw_track = "Media idle"
         self.notify_hint.setVisible(False)
 

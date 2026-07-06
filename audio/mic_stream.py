@@ -31,6 +31,8 @@ def callback(indata, frames, time_info, status):
         noise_tracker.update(volume)
 
     is_speech = vad_engine.detect_speech(indata, threshold)
+    # if is_speech:
+    #     print(f"speech frame  vol:{volume:.1f}")
 
     # pass frame result to confidence engine
     event = confidence_engine.process(is_speech)

@@ -321,8 +321,8 @@ class FloatingIsland(QWidget):
             "error": "Runtime issue",
             "calibrating-silence": "Calibration: stay silent",
             "calibrating-speech": "Calibration: speak now",
-            "idle": "Ambient ready",
-        }.get(mapped, "Ambient ready")
+            "idle": "Hushline ready",
+        }.get(mapped, "Hushline ready")
         subtitle = note.get("body") or {
             "playback": "Playback riding your focus",
             "speaking": "Conversation opened nearby",
