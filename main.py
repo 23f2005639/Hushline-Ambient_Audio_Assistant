@@ -1,5 +1,39 @@
 import sys
 import os
+import tempfile
+
+def ensure_single_instance():
+    """
+    Prevents multiple instances of HushLine running simultaneously.
+    Uses a lock file in the temp directory.
+    If another instance is already running, exit immediately.
+    """
+    lock_file = os.path.join(tempfile.gettempdir(), "hushline.lock")
+
+    try:
+        if sys.platform == "win32":
+            import msvcrt
+            lock = open(lock_file, 'w')
+            msvcrt.locking(lock.fileno(), msvcrt.LK_NBLCK, 1)
+        else:
+            import fcntl
+            lock = open(lock_file, 'w')
+            fcntl.flock(lock.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+
+        # write our PID so we can identify the process
+        lock.write(str(os.getpid()))
+        lock.flush()
+
+        # keep the lock file handle open for the lifetime of the process
+        sys._hushline_lock = lock
+
+    except (IOError, OSError):
+        # lock already held — another instance is running
+        print("HushLine is already running.")
+        sys.exit(0)
+
+ensure_single_instance()
+
 
 # Add _MEIPASS directory to PATH on Windows so ctypes can locate PortAudio DLL (for sounddevice/PyInstaller)
 if getattr(sys, 'frozen', False) and sys.platform == 'win32':

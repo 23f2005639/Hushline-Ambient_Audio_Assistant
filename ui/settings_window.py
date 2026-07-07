@@ -34,12 +34,12 @@ class SettingsWindow(QWidget):
         self.controls: dict[str, Any] = {}
         self.color_inputs: dict[str, QLineEdit] = {}
 
-        self.setWindowTitle("Ambient Settings")
+        self.setWindowTitle("Hushline Settings")
         self.resize(720, 680)
 
         outer = QVBoxLayout(self)
         outer.setContentsMargins(18, 18, 18, 18)
-        title = QLabel("Ambient Settings")
+        title = QLabel("Hushline Settings")
         title.setObjectName("settingsTitle")
         outer.addWidget(title)
 
